@@ -1,6 +1,6 @@
 # dc
 
-The Yieldr Dynamic Creative rendering tool is intended for use by developers implementing dynamic creatives and wish to test using product information.
+Quickly render mustache templates
 
 # Usage
 
@@ -10,8 +10,22 @@ Call `dc` with a template `-t` and some data `-d`. Both the template and the dat
 - URL: `-t 'http://example.com/example.html.mustache'` `-d 'http://jsonip.com'`
 - String: `-t '<p>{{foo}}</p>'` `-d '{"foo": "bar"}'`
 
+## Examples
+
 ```bash
 $ ./dc -t '<div>{{#dicks}}<p>{{.}}</p>{{/dicks}}</div>' -d 'http://dicks-api.herokuapp.com/dicks/5'
-<div><p>8==D</p><p>8======D</p><p>8====D</p><p>8===D</p><p>8==D</p></div>
 ```
 
+```bash
+$ ./dc -t template.html.mustache -d products.json
+```
+
+A useful feature of `dc` is the built in web server. Using the `-s` option `dc` will start a web server listening on `http://localhost:8080` and opens up a browser window with your rendered creative. From here on out you can freely refresh the page and the template will be re-rendered.
+
+```bash
+$ ./dc -s -t template.html.mustache -d products.json
+```
+
+# Mustache
+
+You can read the documentation on mustache logic-less templating [here](http://mustache.github.io/) or play around with their [demo](http://mustache.github.io/#demo).
