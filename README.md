@@ -26,6 +26,37 @@ A useful feature of `dc` is the built in web server. Using the `-s` option `dc` 
 $ ./dc -s -t template.html.mustache -d products.json
 ```
 
+Access with recommender data.
+
+```bash
+$ cat template.html.mustache
+<ul>
+    {{#products}}
+    <li>
+        <a href="{{deeplink}}">{{from_airport}}-{{to_airport}}</a>
+    </li>
+    {{/products}}
+</ul>
+
+$ cat products.json
+{
+  "products": [
+    {
+      "from_airport": "TRN"
+      "to_airport": "PMO",
+      "deeplink": "/Search.aspx?culture=it-IT&from=TRN&to=PMO&departuredate=2014-08-20&returndate=2014-08-22",
+    }
+  ]
+}
+
+$ dc -t template.html.mustache -d products.json
+<ul>
+    <li>
+        <a href="/Search.aspx?culture=it-IT&amp;bookingtype=flight&amp;from=TRN&amp;to=PMO&amp;triptype=roundtrip&amp;departuredate=2014-08-20&amp;returndate=2014-08-22&amp;adults=1&amp;children=0&amp;infants=0&amp;showNewSearch=false&amp;utm_campaign=retargeting">TRN-PMO</a>
+    </li>
+</ul>
+```
+
 # Mustache
 
 You can read the documentation on mustache logic-less templating [here](http://mustache.github.io/) or play around with their [demo](http://mustache.github.io/#demo).

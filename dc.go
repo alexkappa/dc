@@ -110,6 +110,7 @@ func handle(html, data string) http.HandlerFunc {
 			fmt.Fprintf(w, "Unable to parse data. %s\n", err)
 			return
 		}
+		w.Header().Add("Content-Type", "text/html")
 		fmt.Fprintf(w, "%s", t.Render(d))
 	}
 }

@@ -1,0 +1,11 @@
+<body>
+   {{#products}}
+   <div>
+       <span>{{from_city}}</span>
+       <span>{{to_city}}</span>
+       <span>{{price}}</span>
+       <div>{{call_to_action}}</div>
+   </div>
+   {{/products}}
+   {{^products}}<p>Sorry! No products found...</p>{{/products}}
+</body>
