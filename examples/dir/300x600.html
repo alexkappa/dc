@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<link rel="stylesheet" type="text/css" href="css/300x600.css">
+		<script language="javascript" type="text/javascript" src="js/fade.js"></script>
+		<script language="javascript" type="text/javascript" src="js/animation.js"></script>
+	</head>
+	<body>
+		<div id="wrapper">
+	        {{#products}}
+	            <div class='product' >
+	                <p class='from-text'>Travel from: {{from_city}}</p>
+	                <p class='to-text'>To: {{to_city}}</p>
+	                <p class='price'>Only {{price}} {{currency}}</p>
+	                <p class='cta'>{{call_to_action}}</p>
+	                <p class='disclaimer'>{{subscript}}</p>
+	            </div>
+	        {{/products}}
+	        {{^products}}
+	            <p>Sorry! No products found...</p>
+	        {{/products}}
+		</div>
+    </body>
+</html>
