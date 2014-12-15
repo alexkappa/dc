@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"flag"
@@ -24,13 +25,15 @@ const (
 var (
 	html,
 	data,
-	addr string
+	addr,
+	static string
 	serve bool
 )
 
 func init() {
 	flag.StringVar(&html, "t", "", "The creative template.")
 	flag.StringVar(&data, "d", "", "The data to populate the template with.")
+	flag.StringVar(&static, "r", "", "Static file root")
 	flag.BoolVar(&serve, "s", false, "Serve the template using HTTP.")
 	flag.StringVar(&addr, "h", "localhost:8080", "Server address.")
 	flag.Parse()
@@ -44,7 +47,7 @@ func main() {
 	}
 	if serve {
 		go open.Run("http://" + addr + "/render")
-		http.ListenAndServe(addr, handle(html, data))
+		http.ListenAndServe(addr, handle(html, data, static))
 	} else {
 		t, err := parseTemplate(html)
 		if err != nil {
@@ -109,7 +112,7 @@ func parseTemplateDir(dir string) (*mustache.Template, error) {
 		}
 		r := strings.NewReplacer(
 			"{{name}}", file,
-			"{{content}}", string(b),
+			"{{src}}", "data:text/html;base64,"+base64.StdEncoding.EncodeToString(b),
 			"{{width}}", dim[0],
 			"{{height}}", dim[1])
 		p += r.Replace(frame)
@@ -144,20 +147,31 @@ func unmarshal(b []byte) (v interface{}, err error) {
 	return nil, fmt.Errorf("Invalid format. %s", err)
 }
 
-func handle(html, data string) http.HandlerFunc {
+func handle(html, data, static string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		t, err := parseTemplate(html)
-		if err != nil {
-			fmt.Fprintf(w, "Unable to parse template. %s\n", err)
-			return
+		if strings.HasPrefix(r.URL.Path, "/render") {
+			t, err := parseTemplate(html)
+			if err != nil {
+				fmt.Fprintf(w, "Unable to parse template. %s\n", err)
+				return
+			}
+			d, err := parseData(data)
+			if err != nil {
+				fmt.Fprintf(w, "Unable to parse data. %s\n", err)
+				return
+			}
+			w.Header().Add("Content-Type", "text/html")
+			fmt.Fprintf(w, "%s", t.Render(d))
+		} else {
+			if !filepath.IsAbs(static) {
+				wd, err := os.Getwd()
+				if err != nil {
+					fmt.Fprintf(w, "Unable to get the current working directory: %s", err)
+				}
+				static = filepath.Join(wd, static)
+			}
+			http.FileServer(http.Dir(static)).ServeHTTP(w, r)
 		}
-		d, err := parseData(data)
-		if err != nil {
-			fmt.Fprintf(w, "Unable to parse data. %s\n", err)
-			return
-		}
-		w.Header().Add("Content-Type", "text/html")
-		fmt.Fprintf(w, "%s", t.Render(d))
 	}
 }
 
@@ -199,7 +213,6 @@ const layout = `<!DOCTYPE html>
 
 const frame = `<div>
 	<h2>{{name}}</h2>
-	<iframe src="" width="{{width}}px" height="{{height}}px" scrolling="no" frameborder="0">
-		{{content}}
+	<iframe src="{{src}}" width="{{width}}px" height="{{height}}px" scrolling="no" frameborder="0">
 	</iframe>
 </div>`
