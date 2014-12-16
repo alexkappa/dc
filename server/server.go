@@ -89,20 +89,27 @@ func (s *Server) ServePreview(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) URL() string {
-	if s.isDir {
-		return "http://" + s.addr + "/p"
-	}
-	return "http://" + s.addr + "/t"
+	return "http://" + s.addr
 }
 
+// Open opens a new browser window at the servers URL. The path depends on
+// whether the template specified is a
 func (s *Server) Open() error {
-	return open.Run(s.URL())
+	if s.isDir {
+		return open.Run(s.URL() + "/p")
+	}
+	return s.URL() + "/t"
+
 }
 
+// Listen listens for HTTP requests on the address specified by the -a command
+// line option.
 func (s *Server) Listen() error {
 	return http.ListenAndServe(s.addr, s)
 }
 
+// New creates a new Server instance configured with the supplied command line
+// arguments.
 func New(f flag.Flag) *Server {
 	s := &Server{
 		template: f.Template,
@@ -124,6 +131,7 @@ func New(f flag.Flag) *Server {
 	return s
 }
 
+// Context is the data structure that populates the preview template.
 type Context struct {
 	Frames []Frame
 }

@@ -2,18 +2,11 @@ package main
 
 import (
 	"fmt"
-
 	"os"
 
 	"github.com/alexkappa/dc/console"
 	"github.com/alexkappa/dc/flag"
 	"github.com/alexkappa/dc/server"
-)
-
-const (
-	File = iota
-	URL
-	Text
 )
 
 type args struct {
