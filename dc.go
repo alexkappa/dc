@@ -9,14 +9,6 @@ import (
 	"github.com/alexkappa/dc/server"
 )
 
-type args struct {
-	template,
-	data,
-	static,
-	addr string
-	serve bool
-}
-
 func main() {
 	f, err := flag.New(os.Args)
 	if f.ShowHelp || err != nil {

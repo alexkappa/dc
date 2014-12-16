@@ -8,6 +8,9 @@ import (
 	"github.com/hoisie/mustache"
 )
 
+// Parse attempts to parse s in several ways. First it attempts to open a file
+// locally with the name s. If that fails then it tries to get s over http. If
+// that fails it treats s as the template and attempts to parse it.
 func Parse(s string) (*mustache.Template, error) {
 	if f, err := os.Open(s); err == nil {
 		defer f.Close()
@@ -27,10 +30,12 @@ func Parse(s string) (*mustache.Template, error) {
 	return mustache.ParseString(s)
 }
 
+// Render is a wrapper for mustache.Render.
 func Render(s string, c interface{}) string {
 	return mustache.Render(s, c)
 }
 
+// PreviewHTML is the preview template that populates a list of iframes.
 const PreviewHTML = `<!DOCTYPE html>
 <html>
 <head>

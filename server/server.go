@@ -16,6 +16,7 @@ import (
 	"github.com/skratchdot/open-golang/open"
 )
 
+// Server is able to listen to http connections and render mustache templates.
 type Server struct {
 	template,
 	data,
@@ -88,6 +89,7 @@ func (s *Server) ServePreview(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "%s", template.Render(template.PreviewHTML, context))
 }
 
+// URL returns the address which the server listens on for HTTP connections.
 func (s *Server) URL() string {
 	return "http://" + s.addr
 }
@@ -98,7 +100,7 @@ func (s *Server) Open() error {
 	if s.isDir {
 		return open.Run(s.URL() + "/p")
 	}
-	return s.URL() + "/t"
+	return open.Run(s.URL() + "/t")
 
 }
 
@@ -136,18 +138,22 @@ type Context struct {
 	Frames []Frame
 }
 
+// Frame is used within Context and it represents a single <iframe> element.
 type Frame struct {
 	Name string
 }
 
+// URL returns the address for rendering the particular iframe.
 func (f Frame) URL() string {
 	return "/d/" + f.Name
 }
 
+// Width returns the width of the iframe based on f.Name.
 func (f Frame) Width() string {
 	return strings.Split(f.Name[:strings.Index(f.Name, ".")], "x")[0]
 }
 
+// Height returns the height of the iframe based on f.Name.
 func (f Frame) Height() string {
 	return strings.Split(f.Name[:strings.Index(f.Name, ".")], "x")[1]
 }

@@ -8,6 +8,9 @@ import (
 	"os"
 )
 
+// Parse attempts to parse s in several ways. First it attempts to open a file
+// locally with the name s. If that fails then it tries to get s over http. If
+// that fails it treats s as input and attempts to parse it.
 func Parse(s string) (interface{}, error) {
 	if f, err := os.Open(s); err == nil {
 		b, err := ioutil.ReadAll(f)

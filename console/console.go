@@ -8,6 +8,7 @@ import (
 	"github.com/alexkappa/dc/template"
 )
 
+// Console can render creatives to stdout.
 type Console struct {
 	template,
 	data string
@@ -27,6 +28,7 @@ func (c *Console) Render() error {
 	return nil
 }
 
+// New returns a new instance of Console configured by f.
 func New(f flag.Flag) *Console {
 	return &Console{f.Template, f.Data}
 }

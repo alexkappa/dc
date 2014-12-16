@@ -8,7 +8,7 @@ import (
 	flag "github.com/ogier/pflag"
 )
 
-// Args represents the available command line arguments available to the user.
+// Flag represents the available command line arguments available to the user.
 type Flag struct {
 	Template,
 	Data,
@@ -20,7 +20,7 @@ type Flag struct {
 	Usage func()
 }
 
-// Validate that at least a template and some data were specified via the CLI.
+// Valid checks that at least a template and data were specified via the CLI.
 func (f Flag) Valid() bool {
 	return f.Template != "" && f.Data != ""
 }
